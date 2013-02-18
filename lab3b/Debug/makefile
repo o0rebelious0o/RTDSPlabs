@@ -6,26 +6,23 @@ SHELL = cmd.exe
 
 EMPTY := 
 SPACE := $(EMPTY) $(EMPTY)
-CG_TOOL_ROOT := C:/Program Files (x86)/Texas Instruments/ccsv4/tools/compiler/c6000
 
 ORDERED_OBJS += \
 $(GEN_CMDS_QUOTED) \
 "./sine.obj" \
 "./dsp_bios_cfg_c.obj" \
 "./dsp_bios_cfg.obj" \
--l"C:/Program Files (x86)/Texas Instruments/ccsv4/tools/compiler/c6000/lib/rts6700.lib" \
--l"C:/Program Files (x86)/Texas Instruments/ccsv4\C6000\csl\lib\csl6713.lib" \
--l"C:/Program Files (x86)/Texas Instruments/ccsv4\C6000\dsk6713\lib\dsk6713bslccsv4.lib" \
+-l"libc.a" \
+-l"C:\EEE\CCStudio4.1\ccsv4\C6000\dsk6713\lib\dsk6713bslccsv4.lib" \
+-l"C:\EEE\CCStudio4.1\ccsv4\C6000\csl\lib\csl6713.lib" \
 
 -include ../makefile.init
 
 RM := DEL /F
-RMDIR := RMDIR /S/Q
 
 # All of the sources participating in the build are defined here
 -include sources.mk
--include subdir_vars.mk
--include subdir_rules.mk
+-include subdir.mk
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
@@ -41,23 +38,50 @@ endif
 ifneq ($(strip $(S_UPPER_DEPS)),)
 -include $(S_UPPER_DEPS)
 endif
+ifneq ($(strip $(C++_DEPS)),)
+-include $(C++_DEPS)
+endif
 ifneq ($(strip $(S_DEPS)),)
 -include $(S_DEPS)
 endif
-ifneq ($(strip $(CPP_DEPS)),)
--include $(CPP_DEPS)
+ifneq ($(strip $(CC_DEPS)),)
+-include $(CC_DEPS)
 endif
 ifneq ($(strip $(C64_DEPS)),)
 -include $(C64_DEPS)
 endif
-ifneq ($(strip $(C43_DEPS)),)
--include $(C43_DEPS)
+ifneq ($(strip $(CPP_DEPS)),)
+-include $(CPP_DEPS)
+endif
+ifneq ($(strip $(S64_DEPS)),)
+-include $(S64_DEPS)
+endif
+ifneq ($(strip $(CXX_DEPS)),)
+-include $(CXX_DEPS)
+endif
+ifneq ($(strip $(C67_DEPS)),)
+-include $(C67_DEPS)
+endif
+ifneq ($(strip $(S67_DEPS)),)
+-include $(S67_DEPS)
+endif
+ifneq ($(strip $(S43_DEPS)),)
+-include $(S43_DEPS)
 endif
 ifneq ($(strip $(C62_DEPS)),)
 -include $(C62_DEPS)
 endif
+ifneq ($(strip $(C43_DEPS)),)
+-include $(C43_DEPS)
+endif
 ifneq ($(strip $(C??_DEPS)),)
 -include $(C??_DEPS)
+endif
+ifneq ($(strip $(ASM_UPPER_DEPS)),)
+-include $(ASM_UPPER_DEPS)
+endif
+ifneq ($(strip $(OPT_DEPS)),)
+-include $(OPT_DEPS)
 endif
 ifneq ($(strip $(S??_DEPS)),)
 -include $(S??_DEPS)
@@ -68,41 +92,11 @@ endif
 ifneq ($(strip $(C_DEPS)),)
 -include $(C_DEPS)
 endif
-ifneq ($(strip $(C_UPPER_DEPS)),)
--include $(C_UPPER_DEPS)
-endif
 ifneq ($(strip $(SA_DEPS)),)
 -include $(SA_DEPS)
 endif
-ifneq ($(strip $(C++_DEPS)),)
--include $(C++_DEPS)
-endif
-ifneq ($(strip $(K_DEPS)),)
--include $(K_DEPS)
-endif
-ifneq ($(strip $(CC_DEPS)),)
--include $(CC_DEPS)
-endif
-ifneq ($(strip $(S64_DEPS)),)
--include $(S64_DEPS)
-endif
-ifneq ($(strip $(CXX_DEPS)),)
--include $(CXX_DEPS)
-endif
-ifneq ($(strip $(S43_DEPS)),)
--include $(S43_DEPS)
-endif
-ifneq ($(strip $(S67_DEPS)),)
--include $(S67_DEPS)
-endif
-ifneq ($(strip $(C67_DEPS)),)
--include $(C67_DEPS)
-endif
-ifneq ($(strip $(ASM_UPPER_DEPS)),)
--include $(ASM_UPPER_DEPS)
-endif
-ifneq ($(strip $(OPT_DEPS)),)
--include $(OPT_DEPS)
+ifneq ($(strip $(C_UPPER_DEPS)),)
+-include $(C_UPPER_DEPS)
 endif
 endif
 
@@ -111,19 +105,19 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: RTDSP.out
+all: Lab3b.out
 
 # Tool invocations
-RTDSP.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
+Lab3b.out: $(GEN_CMDS) $(OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Linker'
-	"C:/Program Files (x86)/Texas Instruments/ccsv4/tools/compiler/c6000/bin/cl6x" -mv6700 -g --define="_DEBUG" --define="CHIP_6713" --diag_warning=225 --abi=coffabi -z -m"RTDSP.map" --warn_sections -i"C:/Program Files (x86)/Texas Instruments/ccsv4/tools/compiler/c6000/lib" -i"C:/Program Files (x86)/Texas Instruments/ccsv4/tools/compiler/c6000/include" -i"C:/Program Files (x86)/Texas Instruments/bios_5_41_10_36/packages/ti/rtdx/lib/c6000" -i"C:/Program Files (x86)/Texas Instruments/bios_5_41_10_36/packages/ti/bios/lib" --reread_libs --rom_model -o "RTDSP.out" $(ORDERED_OBJS)
+	"C:/EEE/CCStudio4.1/ccsv4/tools/compiler/c6000/bin/cl6x" -mv6700 -g --define="DEBUG" --define="CHIP_6713" --diag_warning=225 -z -m"Lab3b.map" --warn_sections -i"C:/EEE/CCStudio4.1/ccsv4/tools/compiler/c6000/lib" -i"C:/EEE/CCStudio4.1/ccsv4/tools/compiler/c6000/include" -i"C:/EEE/CCStudio4.1/bios_5_41_02_14/packages/ti/rtdx/lib/c6000" -i"C:/EEE/CCStudio4.1/bios_5_41_02_14/packages/ti/bios/lib" --reread_libs --rom_model -o "Lab3b.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(GEN_CMDS__QTD)$(GEN_SRCS__QTD)$(C6000_EXECUTABLE_OUTPUTS__QTD)$(GEN_MISC_FILES__QTD) "RTDSP.out"
+	-$(RM) $(GEN_CMDS__QTD)$(GEN_SRCS__QTD)$(C6000_EXECUTABLE_OUTPUTS__QTD) "Lab3b.out"
 	-$(RM) ".\dsp_bios_cfg.obj" ".\dsp_bios_cfg_c.obj" ".\sine.obj" 
 	-$(RM) ".\dsp_bios_cfg.pp" 
 	-$(RM) ".\dsp_bios_cfg_c.pp" ".\sine.pp" 

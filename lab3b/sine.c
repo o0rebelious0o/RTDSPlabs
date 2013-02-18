@@ -74,16 +74,15 @@ DSK6713_AIC23_CodecHandle H_Codec;
 int sampling_freq = 8000;
 
 // Keep track of which sample we're on
-int sample_number = 0;
+float sample_number = 0;
 
 // Holds the value of the current sample 
-short sample;
+float sample;
+float wave;
+int rectify = 0;
 
-/* Left and right audio channel gain values, calculated to be less than signed 32 bit
- maximum value. */
-Int32 L_Gain = 2100000000;
-Int32 R_Gain = 2100000000;
-
+// Define Output Gain
+#define GAIN 32000
 
 /* Use this variable in your code to set the frequency of your sine wave 
    be carefull that you do not set it above the current nyquist frequency! */
@@ -97,7 +96,7 @@ void init_hardware(void);
 void init_HWI(void);
 void init_sine(void);
 void ISR_SINEOUT(void);  
-float sinegen(void);
+//float sinegen(void);
 /********************************** Main routine ************************************/
 void main()
 {
@@ -121,7 +120,7 @@ void init_sine()
 	/* Function to populate the values in the sine table */
 	int i;
 	for(i=0; i<=SINE_TABLE_SIZE; i++){
-			table[i] = sin((i/SINE_TABLE_SIZE) * PI);
+			table[i] = sin((2 * PI * i)/SINE_TABLE_SIZE);
 	};
 }
 
@@ -151,40 +150,25 @@ void init_HWI(void)
 	IRQ_enable(IRQ_EVT_XINT1);		// Enables the event
 	IRQ_globalEnable();				// Globally enables interrupts
 
-} 
-
-/********************************** sinegen() ***************************************/   
-float sinegen(void)
-{
-	// temporary variable used to output values from function
-	float wave;	
-	
-	// Calculate number of samples per complete sine wave
-	int sample_count = sampling_freq/sine_freq;
-	
-	// Calculate the next look up table element to be returned
-	sample_number = ((sample_number + (SINE_TABLE_SIZE/sample_count)) % SINE_TABLE_SIZE);
-	
-	// Return sine table element corresponding to this sample
-	wave = table[sample_number];
-    return(wave);
 }
 
 void ISR_SINEOUT(void)
 {
-	float wave;
-	short sample;
-	
 	// Calculate number of samples per complete sine wave
-	int sample_count = sampling_freq/sine_freq;
+	float sample_count = sampling_freq/sine_freq;
 	
 	// Calculate the next look up table element to be returned
-	sample_number = ((sample_number + (SINE_TABLE_SIZE/sample_count)) % SINE_TABLE_SIZE);
+	sample_number = ((sample_number + (SINE_TABLE_SIZE/sample_count)));
+	
+	if (sample_number > SINE_TABLE_SIZE) sample_number -= SINE_TABLE_SIZE;
 	
 	// Return sine table element corresponding to this sample
-	wave = table[sample_number];
+	wave = table[(int)sample_number] * GAIN;
 	
-	sample = (short)abs(wave);
+	if (rectify) 
+		{sample = abs(wave);}
+	else
+		{sample = wave;}
 	
 	mono_write_16Bit(sample);
 	

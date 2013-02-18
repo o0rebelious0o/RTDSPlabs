@@ -6,8 +6,8 @@ bios.enableRtdx(prog);
 bios.enableTskManager(prog);
 
 bios.HWI.instance("HWI_INT4").interruptSource = prog.get("MCSP_1_Receive");
-bios.HWI.instance("HWI_INT4").useDispatcher = 1;
 bios.HWI.instance("HWI_INT4").fxn = prog.extern("ISR_SINEOUT");
+bios.HWI.instance("HWI_INT4").useDispatcher = 1;
 // !GRAPHICAL_CONFIG_TOOL_SCRIPT_INSERT_POINT!
 
 prog.gen();

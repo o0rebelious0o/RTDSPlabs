@@ -76,7 +76,7 @@ DSK6713_AIC23_CodecHandle H_Codec;
 int sampling_freq = 8000;
 
 // Keep track of which sample we're on
-int sample_number = 0;
+float sample_number = 0;
 
 // Array of data used by sinegen to generate sine. These are the initial values.                        
 float y[3] = {0,0,0};
@@ -145,7 +145,7 @@ void init_sine()
 	/* Function to populate the values in the sine table */
 	int i;
 	for(i=0; i<=SINE_TABLE_SIZE; i++){
-			table[i] = sin((i/SINE_TABLE_SIZE) * PI);
+			table[i] = sin((2*PI*i)/SINE_TABLE_SIZE);
 	};
 }
 
@@ -177,13 +177,14 @@ float sinegen(void)
 	float wave;	
 	
 	// Calculate number of samples per complete sine wave
-	int sample_count = sampling_freq/sine_freq;
+	float sample_count = sampling_freq/sine_freq;
 	
 	// Calculate the next look up table element to be returned
-	sample_number = ((sample_number + (SINE_TABLE_SIZE/sample_count)) % SINE_TABLE_SIZE);
+	sample_number = ((sample_number + (SINE_TABLE_SIZE/sample_count)));
+	if (sample_number > SINE_TABLE_SIZE) sample_number -= SINE_TABLE_SIZE;
 	
 	// Return sine table element corresponding to this sample
-	wave = table[sample_number];
+	wave = table[(int)sample_number];
     return(wave);
 }
 

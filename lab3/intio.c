@@ -37,6 +37,11 @@
 // Some functions to help with writing/reading the audio ports when using interrupts.
 #include <helper_functions_ISR.h>
 
+#define GAIN 10
+
+float sample =0;
+float wave =0;
+
 /******************************* Global declarations ********************************/
 
 /* Audio port configuration settings: these values set registers in the AIC23 audio 
@@ -122,9 +127,8 @@ void init_HWI(void)
 
 void ISR_AIC(void)
 {
-	short sample;
-	sample = mono_read_16Bit();
-	sample = abs(sample);
+	wave = mono_read_16Bit();
+	sample = abs(wave) * GAIN;
 	mono_write_16Bit(sample);
 }
   

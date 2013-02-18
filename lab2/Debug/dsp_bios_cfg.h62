@@ -8,7 +8,7 @@
 	.asg "dsp_bios_.cdb", VERS$CDB
 	.asg ";;;", VERS$CDBRELATIVEPATH
 	.asg "dsp_bios_cfg", VERS$CFG
-	.asg "@(#)*** xdcutils-g01", VERS$TREE
+	.asg "@(#)*** xdcutils-e03", VERS$TREE
 
 ;; EXTERNAL REFERENCES
 	.global	HWI_unused
